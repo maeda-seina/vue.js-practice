@@ -13,6 +13,8 @@ Vue.config.devtools = true;
     data: {
       // formがsubmitされた時に、newItemの値をtodosに追加してあげる。それがaddItemというメソッド
       newItem: '',
+      // editIndexが-1をデフォルトにしておき、編集ボタン押したときにtodosのindexが入るためのものとして用意している。
+      editIndex: -1,
       // オブジェクトで管理することに。titleとisDoneというキーで。
       todos: []
     },
@@ -36,16 +38,23 @@ Vue.config.devtools = true;
       this.todos = JSON.parse(localStorage.getItem('todos')) || [];
     },
     methods: {
-      addItem: function () {
-        // isDoneも含めてtodosに追加したいので、titleにthis.newItemが入るようにして、
-        // 追加したばかりのものなので、isDoneはfalseで良いと思う。
-        const item = {
-          title: this.newItem,
-          isDone: false
+      // 追加と編集を同じメソッドで管理
+      setItems: function () {
+        // -1つまり、編集ボタン押されてない時は追加するメソッド。
+        if (this.editIndex === -1) {
+          const item = {
+            title: this.newItem,
+            isDone: false
+          }
+          this.todos.push(item);
+          // pushした後にnewItemを空にして、formに値が残ってしまう問題を解消。
+          this.newItem = '';
+          // ここから編集の内容。
+        } else {
+          this.todos.splice(this.editIndex, 1, this.newItem)
         }
-        this.todos.push(item);
-        // pushした後にnewItemを空にして、formに値が残ってしまう問題を解消。
-        this.newItem = '';
+        // cancelメソッドなくても良さそう？？？
+        this.cancel()
       },
       deleteItem: function (index) {
         if (confirm('are you sure?')) {
@@ -63,6 +72,15 @@ Vue.config.devtools = true;
         //   return !todo.isDone
         // })
         this.todos = this.remaining
+      },
+      // editIndexには編集ボタンを押されたtodosのindexが入るようになっている。
+      edit: function (index) {
+        this.editIndex = index
+        this.newItem = this.todos[index]
+      },
+      cancel: function () {
+        this.newItem = ""
+        this.editIndex = -1
       }
     },
     // todoの残数を表示させるために計算する。データから動的にプロパティを計算してくれる算出プロパティ
@@ -74,6 +92,10 @@ Vue.config.devtools = true;
         return this.todos.filter(function (todo) {
           return !todo.isDone
         })
+      },
+      // 編集ボタン押したらUpdateボタンに変わるようになる。
+      changeButtonText: function () {
+        return this.editIndex === -1 ? 'Add' : 'Update'
       }
     }
   })

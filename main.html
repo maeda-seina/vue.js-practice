@@ -24,6 +24,8 @@
         <span v-bind:class="{done: todo.isDone}">{{todo.title}}</span>
 
         <span v-on:click="deleteItem(index)" class="command">[x]</span>
+<!--        編集ボタンを押すと、editメソッドがよばれるようにしている。-->
+        <span><button v-on:click="edit(index)">編集</button></span>
       </li>
 <!--      todosのlengthがfalseの時(todosに何も入っていない時)、表示させる。-->
       <li v-show="!todos.length">
@@ -34,10 +36,17 @@
 
 <!--    submitされた時のイベントを作成-->
 <!--    v-onというディレクティブを使い、submitした時のメソッドaddItemを指定-->
-    <form v-on:submit.prevent="addItem">
+
+<!--    formのなかにあった、v-on:click="addItem"は、下にあるv-on:click="setItems"でいける-->
+<!--    編集と追加ともにできる。上でも書いてしまったら、二重に追加・編集されてしまう。-->
+    <form>
 <!--      todoにUIから追加できるようにするために、newItemというキーを作成-->
-      <input type="text" v-model="newItem">
-      <input type="submit" value="add">
+
+<!--      追加と編集の時で、v-modelを分けないと、うまく追加・編集共にできない。-->
+      <input v-show="editIndex == -1" type="text" v-model="newItem">
+      <input v-show="!(editIndex == -1)" type="text" v-model="newItem.title">
+<!--      <input type="submit" value="add">-->
+      <span><button v-on:click="setItems">{{ changeButtonText }}</button></span>
     </form>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/vue"></script>
