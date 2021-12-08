@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>My Vue App2</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<!--Vue.jsで扱うUIの領域を定義-->
+  <div id="app">
+<!--    データの値をUIに反映(データ→UI)-->
+<!--    jsの式もそのままかける。-->
+    <p>Hello {{ name.toUpperCase() }}!</p>
+<!--    UIからデータへ反映-->
+<!--    フォームに入力された値が、データにあるnameと結びつくようになる。-->
+    <p><input type="text" v-model="name"></p>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script src="js/index.js"></script>
+</body>
+</html>
